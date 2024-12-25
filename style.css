@@ -1,0 +1,70 @@
+#main {
+    background-image: url("bg.png") !important;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+html, body, #main {
+    overflow: hidden;
+}
+#taskbar {
+    translate: 0 80px;
+    transition: translate 0.2s ease-in-out;
+}
+#taskbar:hover {
+    translate: 0 0;
+}
+#window {
+    animation: pop 0.2s ease-in-out;
+    border-radius: 0.5rem;
+}  
+@keyframes pop {
+    0% {
+        scale: 0;
+    }
+    100% {
+        scale: 1;
+    }
+}
+[purpose="controls"] i {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+[purpose="controls"]:hover i {
+    opacity: 1;
+}
+#loading-icon {
+    animation: loading 2s ease-in-out infinite;
+}
+@keyframes loading {
+    0% {
+        rotate: 0deg;
+        scale: 1;
+    }
+    50% {
+        rotate: 360deg;
+        scale: 1.2;
+    }
+    100% {
+        rotate: 0deg;
+        scale: 1;
+    }
+}
+.encore-dark-theme {
+    border-radius: none !important;
+}
+#content.rounded-none {
+    background: linear-gradient(to bottom, #085020, #043810) !important;
+}
+#taskbar:has(button:hover) button:not(:hover) {
+    scale: 0.95;
+}
+#taskbar button:hover {
+    scale: 1.1;
+    filter: brightness(1);
+}
+#taskbar button {
+    transition: scale 0.2s ease-in-out, filter 0.2s ease-in-out;
+    filter: brightness(0.8);
+    width: 90px;
+    height: 90px;
+}

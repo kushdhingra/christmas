@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChillOS</title>
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❄️</text></svg>">
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="global.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.5/ace.js" type="text/javascript"
+        charset="utf-8"></script>
+</head>
+
+<body class="w-screen h-screen overflow-hidden">
+    <div id="loading-screen" class="w-full h-full flex flex-col items-center fixed top-0 left-0 z-[999999999999999999999999999] justify-center bg-black">
+        <i id="loading-icon" class="fa-solid text-8xl fa-snowflake p-2"></i>
+        <h1 class="text-3xl font-bold">ChillOS</h1>
+    </div>
+    <main id="main" style='background-image: url("bg.png") !important;' class="w-screen text-white h-screen flex flex-col">
+        <div class="w-screen h-fit p-1 bg-[#fff2] backdrop-blur-md flex flex-row justify-between">
+            <div class="text-xl font-mono font-semibold flex items-center">
+                <i class="fa-solid fa-snowflake p-2"></i>ChillOS
+            </div>
+            <div class="flex items-center">
+                <button class="p-2 hover:bg-[#fff1] rounded-md">
+                    <i class="fa-solid fa-wifi"></i>
+                </button>
+                <button class="p-2 hover:bg-[#fff1] rounded-md">
+                    <i class="fa-solid fa-battery-full"></i> 100%
+                </button>
+                <button id="clock" class="p-2 hover:bg-[#fff1] rounded-md relative">
+                    <span id="day"></span>
+                    <span id="month"></span>
+                    <span id="date"></span>
+                    <span id="time"></span>
+                </button>
+            </div>
+        </div>
+        
+        <div id="context-menu" style="display: none;"
+            class="fixed z-[99999999999999999] bg-[#fff4] backdrop-blur-lg rounded-lg shadow-2xl shadow-black text-left">
+            <button class="hover:bg-[#fff4] text-left w-full p-2 rounded-t-lg" onclick="showWindow('terminal'); hideContextMenu();">
+                <i class="fa-solid fa-terminal"></i> Open in Terminal
+            </button>
+            <hr class="my-1">
+            <button class="hover:bg-[#fff4] text-left w-full p-2" onclick="showWindow('notepad'); hideContextMenu();">
+                <i class="fa-solid fa-clipboard"></i> Open in Notepad
+            </button>
+            <button class="hover:bg-[#fff4] text-left w-full p-2" onclick="showWindow('code'); hideContextMenu();">
+                <i class="fa-solid fa-code"></i> Open in Code
+            </button>
+            <hr class="my-1">
+            <button class="hover:bg-[#fff4] text-left w-full p-2" onclick="showWindow('spotify'); hideContextMenu();">
+                <i class="fa-brands fa-spotify"></i> Open in Spotify
+            </button>
+            <button class="hover:bg-[#fff4] text-left w-full p-2" onclick="showWindow('browser'); hideContextMenu();">
+                <i class="fa-solid fa-globe"></i> Open in Browser
+            </button>
+        </div>
+        
+        <div id="window" window-id="notepad" style="display: none;"
+            class="w-[50vw] h-[70vh] bg-white shadow-lg rounded-lg absolute left-4 top-4">
+            <div id="title-bar" class="bg-[#11111b] text-white p-2 rounded-t-md flex flex-row items-center justify-between">
+                <h1 class="text-lg font-bold">
+                    <i class="fa-solid fa-clipboard"></i> Notepad
+                </h1>
+                <div class="w-fit h-fit flex flex-row gap-2">
+                    <button id="minimize-button" purpose="controls" class="bg-green-500 hover:bg-green-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    <button id="maximize-button" purpose="controls" class="bg-yellow-500 hover:bg-yellow-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    <button id="close-button" purpose="controls" class="bg-red-500 hover:bg-red-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    
+                </div>
+            </div>
+            <div id="content" class="h-full min-h-[50] w-full bg-[#1e1e2e] text-white">
+                <div id="notepad-content" class="p-4 w-full h-full outline-none font-mono text-2xl max-w-[50vw] max-h-[70vh] overflow-auto"
+                    contenteditable="true" spellcheck="true" autocorrect="true" autocapitalize="true">
+
+                </div>
+            </div>
+        </div>
+        <div id="window" window-id="code" style="display: none;"
+            class="w-[50vw] h-[70vh] bg-white shadow-lg rounded-lg absolute left-4 top-4">
+            <div id="title-bar" class="bg-[#11111b] text-white p-2 rounded-t-md flex flex-row items-center justify-between">
+                <h1 class="text-lg font-bold">
+                    <i class="fa-solid fa-code"></i> Code Editor
+                </h1>
+                <div class="w-fit h-fit flex flex-row gap-2">
+                    <button id="minimize-button" purpose="controls" class="bg-green-500 hover:bg-green-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    <button id="maximize-button" purpose="controls" class="bg-yellow-500 hover:bg-yellow-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    <button id="close-button" purpose="controls" class="bg-red-500 hover:bg-red-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    
+                </div>
+            </div>
+            <div id="content" class="h-full min-h-[50] w-full bg-[#1e1e2e] text-white">
+                <iframe src="editor.html" class="w-full h-full" frameborder="0"></iframe>
+            </div>
+        </div>
+        <div id="window" window-id="browser" style="display: none;"
+            class="w-[80vw] h-[90vh] bg-white shadow-lg rounded-lg absolute left-4 top-4">
+            <div id="title-bar" class="bg-[#11111b] text-white p-2 rounded-t-md flex flex-row items-center justify-between">
+                <h1 class="text-lg font-bold">
+                    <i class="fa-solid fa-code"></i> Web Browser
+                </h1>
+                <div class="w-fit h-fit flex flex-row gap-2">
+                    <button id="minimize-button" purpose="controls" class="bg-green-500 hover:bg-green-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    <button id="maximize-button" purpose="controls" class="bg-yellow-500 hover:bg-yellow-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    <button id="close-button" purpose="controls" class="bg-red-500 hover:bg-red-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    
+                </div>
+            </div>
+            <div id="content" class="h-full min-h-[50] w-full bg-[#1e1e2e] text-white">
+                <iframe src="https://www.google.com/webhp?igu=1" class="w-full h-full rounded-md" frameborder="0"></iframe>
+            </div>
+        </div>
+        <div id="window" window-id="terminal"
+            class="w-[80vw] h-[70vh] bg-white shadow-lg rounded-lg absolute left-4 top-12">
+            <div id="title-bar" class="bg-[#11111b] text-white p-2 rounded-t-md flex flex-row items-center justify-between">
+                <h1 class="text-lg font-bold">
+                    <i class="fa-solid fa-terminal"></i> Terminal
+                </h1>
+                <div class="w-fit h-fit flex flex-row gap-2">
+                    <button id="minimize-button" purpose="controls" class="bg-green-500 hover:bg-green-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    <button id="maximize-button" purpose="controls" class="bg-yellow-500 hover:bg-yellow-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    <button id="close-button" purpose="controls" class="bg-red-500 hover:bg-red-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    
+                </div>
+            </div>
+            <div id="content" class="h-full min-w-[80vw] w-full bg-[#1e1e2e] text-white rounded-b-lg">
+                <iframe src="terminal.html" class="w-full h-full rounded-b-lg" frameborder="0"></iframe>
+            </div>
+        </div>
+        <div id="window" window-id="spotify" style="display: none;"
+            class="w-[80vw] h-[70vh] bg-white shadow-lg rounded-lg absolute left-4 top-4">
+            <div id="title-bar" class="bg-[#11111b] text-white p-2 rounded-t-md flex flex-row items-center justify-between">
+                <h1 class="text-lg font-bold">
+                    <i class="fa-brands fa-spotify"></i> Spotify Player
+                </h1>
+                <div class="w-fit h-fit flex flex-row gap-2">
+                    <button id="minimize-button" purpose="controls" class="bg-green-500 hover:bg-green-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    <button id="maximize-button" purpose="controls" class="bg-yellow-500 hover:bg-yellow-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    <button id="close-button" purpose="controls" class="bg-red-500 hover:bg-red-400 transition-colors duration-300 w-4 h-4 aspect-square rounded-full flex flex-row items-center justify-center">
+                    </button>
+                    
+                </div>
+            </div>
+            <div is-spotify="true" id="content" class="h-full rounded-none rounded-b-md w-full bg-[#1e1e2e] text-white">
+                <iframe style="border-radius:0px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXbPHTEEyQ6Hv?utm_source=generator" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+            </div>
+        </div>
+        <div id="taskbar"
+            class="w-fit min-w-[80vw] block ml-auto mr-auto fixed bottom-4 left-0 right-0 flex flex-row items-center justify-center gap-4 h-24 z-[9999999]">
+            <button onclick="showWindow('terminal');"
+                class="bg-[#fff4] backdrop-blur-lg shadow-xl shadow-black p-4 rounded-md text-5xl">
+                <i class="fa-solid fa-terminal"></i>
+            </button>
+            <button onclick="showWindow('browser');"
+                class="bg-[#fff4] backdrop-blur-lg shadow-xl shadow-black p-4 rounded-md text-5xl">
+                <i class="fa-solid fa-globe"></i>
+            </button>
+            <button onclick="showWindow('notepad');"
+                class="bg-[#fff4] backdrop-blur-lg shadow-xl shadow-black p-4 rounded-md text-5xl">
+                <i class="fa-solid fa-clipboard"></i>
+            </button>
+            <button onclick="showWindow('code');"
+                class="bg-[#fff4] backdrop-blur-lg shadow-xl shadow-black p-4 rounded-md text-5xl">
+                <i class="fa-solid fa-code"></i>
+            </button>
+            <button onclick="showWindow('spotify');"
+                class="bg-[#fff4] backdrop-blur-lg shadow-xl shadow-black p-4 rounded-md text-5xl">
+                <i class="fa-brands fa-spotify"></i>
+            </button>
+        </div>
+    </main>
+</body>
+
+</html>
